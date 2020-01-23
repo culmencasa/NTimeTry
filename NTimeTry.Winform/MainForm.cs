@@ -149,5 +149,10 @@ namespace NTT
 
 
         }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //MessageBox.Show("");
+        }
     }
 }
