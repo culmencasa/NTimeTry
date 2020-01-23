@@ -43,6 +43,7 @@
             this.colRate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colStartTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colFinishTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.bgwInitCategory = new System.ComponentModel.BackgroundWorker();
             this.contextMenuStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -176,6 +177,11 @@
             this.colFinishTime.Text = "结束于";
             this.colFinishTime.Width = 143;
             // 
+            // bgwInitCategory
+            // 
+            this.bgwInitCategory.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgwInitCategory_DoWork);
+            this.bgwInitCategory.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgwInitCategory_RunWorkerCompleted);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -209,6 +215,7 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem tsmRename;
         private System.Windows.Forms.ToolStripMenuItem tsmDelete;
+        private System.ComponentModel.BackgroundWorker bgwInitCategory;
     }
 }
 

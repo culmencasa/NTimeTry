@@ -16,7 +16,7 @@ namespace NTT.DataAccess.Services
 
                 //var context
 
-                datum = context.Categories.ToList();
+                datum = context.Categories.AsNoTracking().ToList();
             });
 
             return datum;
@@ -32,6 +32,19 @@ namespace NTT.DataAccess.Services
                 result = context.Categories.Add(info);
 
                 context.SaveChanges();
+            });
+
+            return result;
+        }
+
+        public bool Update(CategoryInfo entity)
+        {
+            bool result = false;
+            UsingUserDb((context) => {
+                var dbEntity = context.Categories.Find(entity.Id);
+                Helper.CopyPropertiesTo(entity, dbEntity, "Id"); 
+                context.SaveChanges(); 
+                result = true;
             });
 
             return result;

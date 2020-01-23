@@ -5,6 +5,7 @@ using System;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using Windows.Utils;
+using System.ComponentModel;
 
 namespace NTT
 {
@@ -14,12 +15,12 @@ namespace NTT
         {
             InitializeComponent();
 
+            LoadCategoriesAsync();
             this.Load += MainForm_Load;
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            LoadCategories();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -29,7 +30,7 @@ namespace NTT
 
             if (result == DialogResult.OK)
             {
-                LoadCategories();
+                LoadCategoriesAsync();
             }
         }
 
@@ -54,22 +55,13 @@ namespace NTT
             form.ShowDialog();
         }
 
-        private void LoadCategories()
+        private void LoadCategoriesAsync()
         {
-            this.lvCategoryList.Items.Clear();
-
-            this.lvCategoryList.BeginUpdate();
-
-            var list = Factory.Entry<CategoryService>().FindAll();
-            foreach (var item in list)
+            if (!bgwInitCategory.IsBusy)
             {
-                ListViewItem lvi = new ListViewItem();
-                lvi.Text = item.Name;
-                lvi.Tag = item;
-                this.lvCategoryList.Items.Add(lvi);
+                bgwInitCategory.RunWorkerAsync();
             }
-
-            this.lvCategoryList.EndUpdate();
+            this.lvCategoryList.Items.Clear(); 
         }
 
         private void lvCategoryList_SelectedIndexChanged(object sender, EventArgs e)
@@ -142,17 +134,56 @@ namespace NTT
         {
             var newValue = e.Label;
             var categoryEntity = this.lvCategoryList.Items[e.Item].Tag as CategoryInfo;
-            if (newValue == categoryEntity.Name || string.IsNullOrEmpty(newValue))
+            if (string.IsNullOrEmpty(newValue))
             {
+                e.CancelEdit = true;
                 return;
             }
 
-
+            var result = Factory.Entry<CategoryService>().Update(categoryEntity);
+            if (!result)
+            {
+                e.CancelEdit = true;
+                MessageBox.Show("修改失败");
+            }
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //MessageBox.Show("");
+            var dr = MessageBox.Show("是否退出程序", "退出", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (dr != DialogResult.Yes)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void bgwInitCategory_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        { 
+            var list = Factory.Entry<CategoryService>().FindAll();
+
+            e.Result = list;
+        }
+
+        private void bgwInitCategory_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+
+
+
+            var list = e.Result as List<CategoryInfo>;
+            if (list != null)
+            {
+                this.lvCategoryList.BeginUpdate();
+                foreach (var item in list)
+                {
+                    ListViewItem lvi = new ListViewItem();
+                    lvi.Text = item.Name;
+                    lvi.Tag = item;
+                    this.lvCategoryList.Items.Add(lvi);
+                }
+
+                this.lvCategoryList.EndUpdate();
+            
+            }
         }
     }
 }

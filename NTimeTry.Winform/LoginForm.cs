@@ -19,10 +19,31 @@ namespace NTT
         public LoginForm()
         {
             InitializeComponent();
+
+            accountService = Factory.Entry<AccountService>();
+            accountService.Init();
+
+            Load += LoginForm_Load;
+            FormClosed += LoginForm_FormClosed;
         }
+
+
+        private void LoginForm_Load(object sender, EventArgs e)
+        {
+        }
+
+        private void LoginForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            accountService.Release();
+        }
+
+        AccountService accountService;
+
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
+            var t1 = Environment.TickCount;
+
             string userName = txtUserName.Text;
             string password = txtPassword.Text;
 
@@ -35,10 +56,15 @@ namespace NTT
             userName = userName.Trim();
             password = Misc.MD5(password?.Trim());
 
-            AccountInfo entity  = Factory.Entry<AccountService>().IsValid(userName, password);
+            UserInfo entity  = accountService.GetUser(userName, password);
             if (entity != null)
             {
-                Session.Current.User.BusinessId = entity.User.BusinessId;
+                Session.Current.User.BusinessId = entity.BusinessId;
+
+                var t2 = Environment.TickCount;
+
+                //Console.WriteLine("t2 - t1: " + (t2 - t1).ToString());
+
 
                 this.Hide();
                 MainForm form1 = new MainForm();

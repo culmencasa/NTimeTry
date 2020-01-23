@@ -21,7 +21,7 @@ namespace NTT.DataAccess.DataContexts
 
         public GlobalDbContext() : base("globalDatabase")
         {
-            Accounts.Include(p => p.User);
+            //Accounts.Include(p => p.User);
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
