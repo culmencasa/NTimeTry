@@ -1,0 +1,15 @@
+﻿/.vs
+/DAL/bin
+/DAL/obj
+/NTimeTry/packages
+/NTimeTry.Interfaces/bin
+/NTimeTry.Interfaces/obj
+/NTimeTry.Winform/bin
+/NTimeTry.Winform/obj
+/packages
+/Windows.Forms/bin
+/Windows.Forms/obj
+/Windows.Utils/bin
+/Windows.Utils/obj
+/Windows.Utils.UI/bin
+/Windows.Utils.UI/obj
